@@ -1,0 +1,65 @@
+/* ===== GLOBAL RESET ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ===== BODY BACKGROUND (coffee gradient) ===== */
+body {
+  background: linear-gradient(135deg, #f1e4d3 0%, #d3b99f 100%);
+  min-height: 100vh;
+  color: #333;
+}
+
+/* ===== CARD (forms container) ===== */
+.card {
+  background: #FFF8F0;
+  padding: 30px;
+  border-radius: 16px;
+  max-width: 420px;
+  margin: 60px auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ===== INPUT FIELDS ===== */
+.input {
+  width: 90%;
+  padding: 14px;
+  margin: 12px 0;
+  border-radius: 10px;
+  border: 1px solid #cbb8a8;
+  font-size: 16px;
+  background: #fff;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.input:focus {
+  border-color: #b08968;
+  box-shadow: 0 0 5px rgba(176, 137, 104, 0.4);
+}
+
+/* ===== MAIN BUTTON (Login/Register) ===== */
+.button {
+  width: 90%;
+  background: #7b4b27;
+  border: none;
+  color: #fff;
+  padding: 14px;
+  border-radius: 10px;
+  margin-top: 15px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.button:hover {
+  background: #8a5a36;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+}

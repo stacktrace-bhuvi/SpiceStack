@@ -1,0 +1,42 @@
+/* ===== NAVBAR CONTAINER ===== */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.45);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* ===== LEFT SIDE BRAND ===== */
+.nav-left h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #7b4b27; /* <- changed from pink to coffee brown */
+}
+
+/* ===== NAV BUTTONS ===== */
+.nav-right a,
+.nav-right button {
+  margin-left: 12px;
+  text-decoration: none;
+  padding: 8px 18px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s ease;
+  background: #d6bfa6;      /* coffee pastel instead of pink */
+  color: #3d2a22;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.nav-right a:hover,
+.nav-right button:hover {
+  background: #c8a989;      /* hover - slightly darker coffee */
+  transform: translateY(-1px);
+}
