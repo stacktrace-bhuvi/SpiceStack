@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { register, setAuthToken, getMe } from '../services/api';
+import { register } from '../services/api';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import '../sweetalert-custom.css';
+
 
 export default function Register({ setUser }) {
   const [name, setName] = useState('');
@@ -12,14 +15,30 @@ export default function Register({ setUser }) {
     e.preventDefault();
     try {
       const data = await register({ name, email, password });
-      localStorage.setItem('token', data.token);
-      setAuthToken(data.token);
-      const me = await getMe(data.token);
-      setUser(me);
-      navigate('/');
+
+      if (data.token) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Registration Successful!',
+          text: 'You can now log in to your account 🎉',
+          confirmButtonColor: '#5c3d2e'
+        }).then(() => {
+          navigate('/login'); // redirect after alert closes
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Registration failed. Please try again.'
+        });
+      }
     } catch (err) {
       console.error(err);
-      alert('Registration failed');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong! Please check your details.'
+      });
     }
   };
 

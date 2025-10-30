@@ -1,0 +1,28 @@
+.swal2-popup {
+  background-color: #fff7ee !important;  /* soft cream background */
+  border-radius: 16px !important;
+  font-family: "Poppins", sans-serif !important;
+  color: #4a2e20 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.swal2-title {
+  color: #5c3d2e !important;
+  font-weight: 700;
+}
+
+.swal2-html-container {
+  font-size: 16px;
+}
+
+.swal2-confirm {
+  background-color: #5c3d2e !important; /* dark brown button */
+  color: #fff !important;
+  border-radius: 8px !important;
+  font-weight: 600;
+}
+
+.swal2-cancel {
+  background-color: #c49a6c !important; /* light brown secondary button */
+  color: #fff !important;
+}
