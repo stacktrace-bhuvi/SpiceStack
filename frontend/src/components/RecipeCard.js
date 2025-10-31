@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toggleFavorite } from '../services/api';
 
-export default function RecipeCard({ recipe, user }) {
+export default function RecipeCard({ recipe, user, onDelete }) {
   const navigate = useNavigate();
 
   const handleFav = async () => {
@@ -11,8 +11,7 @@ export default function RecipeCard({ recipe, user }) {
     if (token) {
       try {
         await toggleFavorite(recipe._id);
-        // refresh - naive: reload page
-        window.location.reload();
+        window.location.reload(); // refresh page after toggling favorite
       } catch (err) {
         console.error(err);
       }
@@ -21,6 +20,12 @@ export default function RecipeCard({ recipe, user }) {
 
   const handleEdit = () => {
     navigate(`/add?edit=${recipe._id}`);
+  };
+
+  const handleDelete = () => {
+    if (onDelete) {
+      onDelete(recipe._id);
+    }
   };
 
   return (
@@ -35,19 +40,44 @@ export default function RecipeCard({ recipe, user }) {
             (recipe.description.length > 120 ? '...' : '')
           : ''}
       </p>
+
       <div style={{ marginTop: 8 }}>
-        <Link to={`/recipes/${recipe._id}`} className="button" style={{ marginRight: 8 }}>
+        <Link
+          to={`/recipes/${recipe._id}`}
+          className="button"
+          style={{ marginRight: 8 }}
+        >
           View
         </Link>
-        <button className="button" onClick={handleFav} style={{ marginRight: 8 }}>
+
+        <button
+          className="button"
+          onClick={handleFav}
+          style={{ marginRight: 8 }}
+        >
           ♡ Favorite
         </button>
 
-        {/* ✅ Show Edit only if user created this recipe */}
+        {/* ✏️ Edit Button */}
         {user && recipe.createdBy === user._id && (
-          <button className="button" onClick={handleEdit}>
-            ✏️ Edit
-          </button>
+          <>
+            <button
+              className="button"
+              onClick={handleEdit}
+              style={{ marginRight: 8 }}
+            >
+              ✏️ Edit
+            </button>
+
+            {/* 🗑️ Delete Button */}
+            <button
+              className="button"
+              onClick={handleDelete}
+              style={{ backgroundColor: 'darkred', color: 'white' }}
+            >
+              🗑️ Delete
+            </button>
+          </>
         )}
       </div>
     </div>
