@@ -65,7 +65,7 @@ export default function Home({ user }) {
       <p className="home-subtitle">
         Discover, create, and share recipes with a warm and cozy cooking community.
       </p>
-
+      
       <div className="explore-section">
         <Link to="/recipes">
           <button className="explore-btn">🍽️ Explore Recipes</button>

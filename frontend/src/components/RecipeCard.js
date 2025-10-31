@@ -1,17 +1,14 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { toggleFavorite } from '../services/api';
+import { Link } from 'react-router-dom';
+import { toggleFavorite, deleteRecipe } from '../services/api';
 
 export default function RecipeCard({ recipe, user }) {
-  const navigate = useNavigate();
-
   const handleFav = async () => {
     if (!user) return alert('Login to add favorites');
     const token = localStorage.getItem('token');
     if (token) {
       try {
         await toggleFavorite(recipe._id);
-        // refresh - naive: reload page
         window.location.reload();
       } catch (err) {
         console.error(err);
@@ -19,9 +16,22 @@ export default function RecipeCard({ recipe, user }) {
     }
   };
 
-  const handleEdit = () => {
-    navigate(`/add?edit=${recipe._id}`);
+  const handleDelete = async () => {
+    if (!window.confirm('Are you sure you want to delete this recipe?')) return;
+    try {
+      await deleteRecipe(recipe._id);
+      alert('Recipe deleted successfully!');
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+      alert('Failed to delete recipe');
+    }
   };
+
+  const isOwner = user && recipe.createdBy && recipe.createdBy === user._id; 
+  // sometimes createdBy may be an object, so:
+  const isOwnerCheck =
+    user && recipe.createdBy && (recipe.createdBy._id === user._id || recipe.createdBy === user._id);
 
   return (
     <div className="card">
@@ -35,20 +45,28 @@ export default function RecipeCard({ recipe, user }) {
             (recipe.description.length > 120 ? '...' : '')
           : ''}
       </p>
+
       <div style={{ marginTop: 8 }}>
         <Link to={`/recipes/${recipe._id}`} className="button" style={{ marginRight: 8 }}>
           View
         </Link>
-        <button className="button" onClick={handleFav} style={{ marginRight: 8 }}>
-          ♡ Favorite
-        </button>
 
-        {/* ✅ Show Edit only if user created this recipe */}
-        {user && recipe.createdBy === user._id && (
-          <button className="button" onClick={handleEdit}>
-            ✏️ Edit
-          </button>
+        {isOwnerCheck && (
+          <>
+            <Link
+              to={`/add-recipe?edit=${recipe._id}`}
+              className="button"
+              style={{ marginRight: 8 }}
+            >
+              Edit
+            </Link>
+            <button className="button" onClick={handleDelete} style={{ marginRight: 8 }}>
+              Delete
+            </button>
+          </>
         )}
+
+        <button className="button" onClick={handleFav}>♡ Favorite</button>
       </div>
     </div>
   );

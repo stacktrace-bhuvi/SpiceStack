@@ -45,8 +45,9 @@ export const updateRecipe = async (id, data) => {
   const res = await API.put(`/recipes/${id}`, data);
   return res.data;
 };
-
 export const deleteRecipe = async (id) => {
+  const token = localStorage.getItem('token');
+  if (token) API.defaults.headers.common['x-auth-token'] = token;
   const res = await API.delete(`/recipes/${id}`);
   return res.data;
 };

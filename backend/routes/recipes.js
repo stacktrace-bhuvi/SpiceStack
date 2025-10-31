@@ -22,17 +22,30 @@ router.get('/', async (req, res) => {
 });
 
 // GET /api/recipes/:id
-router.get('/:id', async (req, res) => {
+// GET /api/recipes?q=keyword
+router.get('/', async (req, res) => {
   try {
-    const recipe = await Recipe.findById(req.params.id).populate('createdBy', 'name email');
-    if (!recipe) return res.status(404).json({ msg: 'Recipe not found' });
-    res.json(recipe);
+    const q = req.query.q;
+    let query = {};
+
+    if (q) {
+      query = {
+        $or: [
+          { title: { $regex: q, $options: 'i' } },
+          { category: { $regex: q, $options: 'i' } },
+          { ingredients: { $elemMatch: { $regex: q, $options: 'i' } } },
+        ],
+      };
+    }
+
+    const recipes = await Recipe.find(query).sort({ createdAt: -1 });
+    res.json(recipes);
   } catch (err) {
-    console.error(err.message);
-    if (err.kind === 'ObjectId') return res.status(404).json({ msg: 'Recipe not found' });
+    console.error(err);
     res.status(500).send('Server error');
   }
 });
+
 
 // POST /api/recipes - create (auth)
 router.post('/', auth, async (req, res) => {
@@ -82,19 +95,46 @@ router.put('/:id', auth, async (req, res) => {
 });
 
 // DELETE /api/recipes/:id - delete (auth & owner)
+// DELETE /api/recipes/:id - delete (auth & owner)
 router.delete('/:id', auth, async (req, res) => {
   try {
-    const recipe = await Recipe.findById(req.params.id);
-    if (!recipe) return res.status(404).json({ msg: 'Recipe not found' });
-    if (recipe.createdBy.toString() !== req.user.id) return res.status(403).json({ msg: 'User not authorized' });
+    console.log("🔹 Delete attempt by user:", req.user.id, "for recipe id:", req.params.id);
 
-    await recipe.remove();
-    res.json({ msg: 'Recipe removed' });
+    // fetch the recipe (no lean so usually returns a document)
+    const recipe = await Recipe.findById(req.params.id);
+
+    // debug what we received
+    console.log("🔹 recipe value:", recipe);
+    if (recipe) {
+      console.log("🔹 recipe type:", typeof recipe, "constructor:", recipe.constructor && recipe.constructor.name);
+    } else {
+      console.log("🔹 recipe is null/undefined");
+    }
+
+    if (!recipe) {
+      return res.status(404).json({ msg: 'Recipe not found' });
+    }
+
+    // ensure ownership check uses string comparison
+    const ownerId = recipe.createdBy ? recipe.createdBy.toString() : null;
+    console.log("🔹 recipe.createdBy:", ownerId);
+
+    if (ownerId !== req.user.id) {
+      console.log("🔸 Authorization failed - requester:", req.user.id, "owner:", ownerId);
+      return res.status(403).json({ msg: 'User not authorized' });
+    }
+
+    // use the model method to delete directly
+    await Recipe.findByIdAndDelete(req.params.id);
+
+    console.log("✅ Recipe deleted:", req.params.id);
+    return res.json({ msg: 'Recipe removed' });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error("❌ Delete error:", err);
+    return res.status(500).send('Server error');
   }
 });
+
 
 // POST /api/recipes/:id/toggle-favorite - toggle favorite for current user
 router.post('/:id/toggle-favorite', auth, async (req, res) => {
