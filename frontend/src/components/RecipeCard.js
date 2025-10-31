@@ -9,7 +9,7 @@ export default function RecipeCard({ recipe, user }) {
     if (token) {
       try {
         await toggleFavorite(recipe._id);
-        window.location.reload();
+        window.location.reload(); // refresh page after toggling favorite
       } catch (err) {
         console.error(err);
       }
@@ -28,10 +28,11 @@ export default function RecipeCard({ recipe, user }) {
     }
   };
 
-  const isOwner = user && recipe.createdBy && recipe.createdBy === user._id; 
-  // sometimes createdBy may be an object, so:
-  const isOwnerCheck =
-    user && recipe.createdBy && (recipe.createdBy._id === user._id || recipe.createdBy === user._id);
+  // ✅ Only show Edit/Delete if this user created the recipe
+  const isOwner =
+    user &&
+    recipe.createdBy &&
+    (recipe.createdBy._id === user._id || recipe.createdBy === user._id);
 
   return (
     <div className="card">
@@ -47,26 +48,36 @@ export default function RecipeCard({ recipe, user }) {
       </p>
 
       <div style={{ marginTop: 8 }}>
-        <Link to={`/recipes/${recipe._id}`} className="button" style={{ marginRight: 8 }}>
+        <Link
+          to={`/recipes/${recipe._id}`}
+          className="button"
+          style={{ marginRight: 8 }}
+        >
           View
         </Link>
 
-        {isOwnerCheck && (
+        {isOwner && (
           <>
             <Link
               to={`/add-recipe?edit=${recipe._id}`}
               className="button"
               style={{ marginRight: 8 }}
             >
-              Edit
+              ✏️ Edit
             </Link>
-            <button className="button" onClick={handleDelete} style={{ marginRight: 8 }}>
-              Delete
+            <button
+              className="button"
+              onClick={handleDelete}
+              style={{ marginRight: 8, backgroundColor: 'darkred', color: 'white' }}
+            >
+              🗑️ Delete
             </button>
           </>
         )}
 
-        <button className="button" onClick={handleFav}>♡ Favorite</button>
+        <button className="button" onClick={handleFav}>
+          ♡ Favorite
+        </button>
       </div>
     </div>
   );
