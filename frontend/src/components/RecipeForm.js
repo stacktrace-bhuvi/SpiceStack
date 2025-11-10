@@ -9,25 +9,35 @@ export default function RecipeForm({ user }) {
   const [steps, setSteps] = useState('');
   const [category, setCategory] = useState('');
   const [imageURL, setImageURL] = useState('');
+  const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const editId = searchParams.get('edit'); // detect if editing
+  const editId = searchParams.get('edit');
 
-  // 🟢 Load existing recipe if editing
   useEffect(() => {
-    if (editId) {
-      fetchRecipe(editId)
-        .then((r) => {
+    const loadRecipe = async () => {
+      if (editId) {
+        setLoading(true);
+        try {
+          console.log('Fetching recipe to edit:', editId);
+          const r = await fetchRecipe(editId);
+          console.log('Fetched recipe:', r);
           setTitle(r.title || '');
           setDesc(r.description || '');
           setIngredients((r.ingredients || []).join('\n'));
           setSteps((r.steps || []).join('\n'));
           setCategory(r.category || '');
           setImageURL(r.imageURL || '');
-        })
-        .catch(console.error);
-    }
+        } catch (err) {
+          console.error('❌ Failed to fetch recipe:', err);
+          alert('Failed to load recipe for editing');
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    loadRecipe();
   }, [editId]);
 
   const submit = async (e) => {
@@ -59,6 +69,8 @@ export default function RecipeForm({ user }) {
       alert('Error saving recipe');
     }
   };
+
+  if (loading) return <p className="hint">Loading recipe data...</p>;
 
   return (
     <div className="card">

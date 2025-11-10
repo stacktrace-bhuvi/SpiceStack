@@ -64,24 +64,6 @@ router.get('/me', auth, async (req, res) => {
   }
 });
 
-// DELETE /api/recipes/:id - delete (auth & owner)
-router.delete('/:id', auth, async (req, res) => {
-  try {
-    const recipe = await Recipe.findById(req.params.id);
-    if (!recipe) return res.status(404).json({ msg: 'Recipe not found' });
-
-    if (recipe.createdBy.toString() !== req.user.id)
-      return res.status(403).json({ msg: 'User not authorized' });
-
-    // ✅ modern and safe delete method
-    await Recipe.findByIdAndDelete(req.params.id);
-
-    res.json({ msg: 'Recipe removed successfully' });
-  } catch (err) {
-    console.error('Delete error:', err);
-    res.status(500).send('Server error');
-  }
-});
 
 
 module.exports = router;

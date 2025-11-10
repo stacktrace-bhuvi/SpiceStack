@@ -59,7 +59,7 @@ export default function RecipeCard({ recipe, user }) {
         {isOwner && (
           <>
             <Link
-              to={`/add-recipe?edit=${recipe._id}`}
+              to={`/add?edit=${recipe._id}`}  // ✅ FIXED: was `/add-recipe?edit=...`
               className="button"
               style={{ marginRight: 8 }}
             >
@@ -68,7 +68,11 @@ export default function RecipeCard({ recipe, user }) {
             <button
               className="button"
               onClick={handleDelete}
-              style={{ marginRight: 8, backgroundColor: 'darkred', color: 'white' }}
+              style={{
+                marginRight: 8,
+                backgroundColor: 'darkred',
+                color: 'white'
+              }}
             >
               🗑️ Delete
             </button>
